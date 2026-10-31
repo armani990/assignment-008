@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   HeartHandshake,
   ArrowRight,
+  Users,
   Calendar,
   Target,
 } from "lucide-react";
@@ -18,6 +19,7 @@ const bannerImages = [
   "/images/roman-synkevych-5wJ2GiYSifA-unsplash.jpg",
 ];
 
+// Duplicate first and last images for seamless looping
 const slides = [
   bannerImages[bannerImages.length - 1],
   ...bannerImages,
@@ -28,6 +30,7 @@ export default function Banner() {
   const [currentIndex, setCurrentIndex] = useState(1);
   const [transitionEnabled, setTransitionEnabled] = useState(true);
 
+  // Automatic sliding
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => prev + 1);
@@ -36,13 +39,7 @@ export default function Banner() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleTransitionEnd = () => {
-    if (currentIndex === slides.length - 1) {
-      setTransitionEnabled(false);
-      setCurrentIndex(1);
-    }
-  };
-
+  // Reset slider position without animation
   useEffect(() => {
     if (!transitionEnabled) {
       const timeout = setTimeout(() => {
@@ -52,6 +49,13 @@ export default function Banner() {
       return () => clearTimeout(timeout);
     }
   }, [transitionEnabled]);
+
+  const handleTransitionEnd = () => {
+    if (currentIndex === slides.length - 1) {
+      setTransitionEnabled(false);
+      setCurrentIndex(1);
+    }
+  };
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
@@ -93,7 +97,7 @@ export default function Banner() {
       {/* Pattern Overlay */}
       <div className="absolute inset-0 z-10 bg-[url('/images/pattern.png')] opacity-5" />
 
-      {/* Banner Content */}
+      {/* Main Banner Content */}
       <div className="relative z-20 container mx-auto px-4 py-20">
         <div className="max-w-4xl mx-auto text-center">
 
@@ -155,8 +159,65 @@ export default function Banner() {
             </Button>
           </div>
 
+          {/* Stats Bar */}
+          <div
+            className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-8 animate-fade-in-up"
+            style={{ animationDelay: "400ms" }}
+          >
+            <div className="text-center p-5 bg-white/5 backdrop-blur rounded-2xl border border-white/10">
+              <div className="text-3xl md:text-4xl font-bold text-teal-300">
+                2,500+
+              </div>
+              <div className="text-white/70 text-sm mt-1">
+                Active Volunteers
+              </div>
+            </div>
+
+            <div className="text-center p-5 bg-white/5 backdrop-blur rounded-2xl border border-white/10">
+              <div className="text-3xl md:text-4xl font-bold text-teal-300">
+                180+
+              </div>
+              <div className="text-white/70 text-sm mt-1">
+                Events This Month
+              </div>
+            </div>
+
+            <div className="text-center p-5 bg-white/5 backdrop-blur rounded-2xl border border-white/10">
+              <div className="text-3xl md:text-4xl font-bold text-teal-300">
+                45+
+              </div>
+              <div className="text-white/70 text-sm mt-1">
+                Partner Organizations
+              </div>
+            </div>
+          </div>
+
+          {/* Trust Indicators */}
+          <div
+            className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-white/60 text-sm animate-fade-in-up"
+            style={{ animationDelay: "500ms" }}
+          >
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-teal-300" />
+              <span>Trusted by communities worldwide</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <HeartHandshake className="h-4 w-4 text-teal-300" />
+              <span>100% transparent impact tracking</span>
+            </div>
+          </div>
+
         </div>
       </div>
+
+      {/* Scrolling Indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
+          <div className="w-1.5 h-1.5 bg-white/60 rounded-full" />
+        </div>
+      </div>
+
     </section>
   );
 }
