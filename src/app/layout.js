@@ -3,6 +3,7 @@ import "./globals.css";
 
 import Navbar from "@/components/shared/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
+import Footer from "@/components/shared/Footer";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
         >
           <Navbar />
           {children}
+          <Footer></Footer>
         </ThemeProvider>
       </body>
     </html>
