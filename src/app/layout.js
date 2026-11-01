@@ -1,9 +1,11 @@
+
 import { Geist } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "@/components/shared/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import Footer from "@/components/shared/Footer";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -24,6 +26,8 @@ export default function RootLayout({ children }) {
           defaultTheme="system"
           enableSystem
         >
+          <Toaster position="top-right" />
+
           <Navbar />
           {children}
           <Footer></Footer>

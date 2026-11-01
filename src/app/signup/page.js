@@ -3,9 +3,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import NextImage from "next/image";
+
+import { authClient } from "@/lib/auth-client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+import toast from "react-hot-toast";
+
 import {
   HeartHandshake,
   User,
@@ -13,19 +21,95 @@ import {
   Lock,
   Eye,
   EyeOff,
-  Image,
+  Image as ImageIcon,
 } from "lucide-react";
 
 export default function SignupPage() {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [name, setName] = useState("");
   const [photoURL, setPhotoURL] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check empty fields
+    if (
+      !name.trim() ||
+      !photoURL.trim() ||
+      !email.trim() ||
+      !password
+    ) {
+      toast.error("Please fill in all fields!");
+      return;
+    }
+
+    // Check email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email.trim())) {
+      toast.error("Please enter a valid email address!");
+      return;
+    }
+
+    // Password validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+
+    if (!passwordRegex.test(password)) {
+      toast.error(
+        "Password must contain uppercase, lowercase and at least 6 characters!"
+      );
+      return;
+    }
+
+    // Photo URL validation
+    try {
+      const imageURL = new URL(photoURL.trim());
+
+      if (
+        imageURL.protocol !== "http:" &&
+        imageURL.protocol !== "https:"
+      ) {
+        toast.error("Please enter a valid photo URL!");
+        return;
+      }
+    } catch {
+      toast.error("Please enter a valid photo URL!");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const { data, error } = await authClient.signUp.email({
+        name: name.trim(),
+        email: email.trim(),
+        password: password,
+        image: photoURL.trim(),
+      });
+
+      if (error) {
+        toast.error(error.message || "Account creation failed!");
+        return;
+      }
+
+      if (data) {
+        toast.success("Account created successfully!");
+
+        router.push("/login");
+      }
+    } catch (error) {
+      toast.error(
+        error.message || "Something went wrong. Please try again!"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -43,10 +127,13 @@ export default function SignupPage() {
 
             <div className="relative bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm rounded-3xl p-6 border border-teal-100/50 dark:border-slate-700 shadow-sm">
 
-              <img
+              <NextImage
                 src="/images/login-illustration.png"
                 alt="Community helping illustration"
+                width={600}
+                height={600}
                 className="w-full h-auto object-contain rounded-2xl"
+                priority
               />
 
             </div>
@@ -85,7 +172,11 @@ export default function SignupPage() {
             </div>
 
             {/* Signup Form */}
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+              className="space-y-5"
+            >
 
               {/* Name */}
               <div className="space-y-2">
@@ -126,7 +217,7 @@ export default function SignupPage() {
 
                 <div className="relative">
 
-                  <Image className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 
                   <Input
                     id="photoURL"
@@ -189,9 +280,6 @@ export default function SignupPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10 h-11 rounded-lg border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus-visible:ring-teal-500"
-                    minLength={6}
-                    pattern="(?=.*[a-z])(?=.*[A-Z]).{6,}"
-                    title="Password must contain at least 6 characters, including uppercase and lowercase letters."
                     required
                   />
 
@@ -213,10 +301,11 @@ export default function SignupPage() {
               {/* Signup Button */}
               <Button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full h-11 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg shadow-sm"
               >
                 <User className="mr-2 h-4 w-4" />
-                Create Account
+                {isSubmitting ? "Creating Account..." : "Create Account"}
               </Button>
 
             </form>
