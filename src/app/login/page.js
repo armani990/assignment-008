@@ -3,9 +3,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import {
     HeartHandshake,
     Mail,
@@ -16,12 +21,42 @@ import {
 } from "lucide-react";
 
 export default function LoginPage() {
+    const router = useRouter();
+
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!email.trim() || !password) {
+            toast.error("Please enter your email and password!");
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const { data, error } = await authClient.signIn.email({
+                email: email.trim(),
+                password,
+            });
+
+            if (error) {
+                toast.error(error.message || "Invalid email or password!");
+                return;
+            }
+
+            toast.success("Login successful!");
+            router.push("/");
+            router.refresh();
+        } catch (error) {
+            toast.error(error.message || "Something went wrong!");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -128,10 +163,11 @@ export default function LoginPage() {
                             {/* Login Button */}
                             <Button
                                 type="submit"
+                                disabled={isSubmitting}
                                 className="w-full h-11 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg shadow-sm"
                             >
                                 <User className="mr-2 h-4 w-4" />
-                                Login
+                                {isSubmitting ? "Logging in..." : "Login"}
                             </Button>
                         </form>
 
