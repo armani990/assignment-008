@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,6 +7,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { authClient } from "@/lib/auth-client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +30,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
     // Redirect logged-in users to homepage
     useEffect(() => {
@@ -36,6 +39,7 @@ export default function LoginPage() {
         }
     }, [session, isPending, router]);
 
+    // Email and Password Login
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -68,6 +72,27 @@ export default function LoginPage() {
         }
     };
 
+    // Google Login
+    const handleGoogleLogin = async () => {
+        setIsGoogleLoading(true);
+
+        try {
+            const { error } = await authClient.signIn.social({
+                provider: "google",
+                callbackURL: "/",
+                errorCallbackURL: "/login",
+            });
+
+            if (error) {
+                toast.error(error.message || "Google login failed!");
+                setIsGoogleLoading(false);
+            }
+        } catch (error) {
+            toast.error(error.message || "Something went wrong!");
+            setIsGoogleLoading(false);
+        }
+    };
+
     // Don't show login form while checking session
     if (isPending || session?.user) {
         return null;
@@ -80,25 +105,31 @@ export default function LoginPage() {
                 {/* Left Side - Illustration */}
                 <div className="hidden lg:flex items-center justify-center relative">
                     <div className="relative w-full max-w-md">
+
                         <div className="absolute -top-10 -left-10 w-72 h-72 bg-teal-100/60 rounded-full blur-3xl" />
+
                         <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-emerald-100/50 rounded-full blur-3xl" />
 
                         <div className="relative bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm rounded-3xl p-6 border border-teal-100/50 dark:border-slate-700 shadow-sm">
+
                             <img
                                 src="/images/login-illustration.png"
                                 alt="Community helping illustration"
                                 className="w-full h-auto object-contain rounded-2xl"
                             />
+
                         </div>
                     </div>
                 </div>
 
                 {/* Right Side - Login Form */}
                 <div className="flex justify-center">
+
                     <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 p-8 sm:p-10 transition-colors duration-300">
 
                         {/* Logo */}
                         <div className="flex items-center justify-center gap-2 mb-6">
+
                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-600 text-white">
                                 <HeartHandshake className="h-5 w-5" />
                             </div>
@@ -106,10 +137,12 @@ export default function LoginPage() {
                             <span className="text-2xl font-bold tracking-tight text-teal-700 dark:text-teal-400">
                                 SevaConnect
                             </span>
+
                         </div>
 
                         {/* Heading */}
                         <div className="text-center mb-8">
+
                             <h1 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">
                                 Welcome Back
                             </h1>
@@ -117,6 +150,7 @@ export default function LoginPage() {
                             <p className="mt-2 text-sm text-muted-foreground">
                                 Login to join and create social service events
                             </p>
+
                         </div>
 
                         {/* Login Form */}
@@ -124,6 +158,7 @@ export default function LoginPage() {
 
                             {/* Email */}
                             <div className="space-y-2">
+
                                 <Label
                                     htmlFor="email"
                                     className="text-sm font-medium text-slate-700 dark:text-slate-200"
@@ -132,6 +167,7 @@ export default function LoginPage() {
                                 </Label>
 
                                 <div className="relative">
+
                                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 
                                     <Input
@@ -143,11 +179,13 @@ export default function LoginPage() {
                                         className="pl-10 h-11 rounded-lg border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus-visible:ring-teal-500"
                                         required
                                     />
+
                                 </div>
                             </div>
 
                             {/* Password */}
                             <div className="space-y-2">
+
                                 <Label
                                     htmlFor="password"
                                     className="text-sm font-medium text-slate-700 dark:text-slate-200"
@@ -156,6 +194,7 @@ export default function LoginPage() {
                                 </Label>
 
                                 <div className="relative">
+
                                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 
                                     <Input
@@ -180,22 +219,25 @@ export default function LoginPage() {
                                             <Eye className="h-4 w-4" />
                                         )}
                                     </button>
+
                                 </div>
                             </div>
 
                             {/* Login Button */}
                             <Button
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || isGoogleLoading}
                                 className="w-full h-11 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg shadow-sm"
                             >
                                 <User className="mr-2 h-4 w-4" />
                                 {isSubmitting ? "Logging in..." : "Login"}
                             </Button>
+
                         </form>
 
                         {/* Divider */}
                         <div className="relative my-6">
+
                             <div className="absolute inset-0 flex items-center">
                                 <span className="w-full border-t border-gray-200 dark:border-slate-700" />
                             </div>
@@ -205,14 +247,18 @@ export default function LoginPage() {
                                     or
                                 </span>
                             </div>
+
                         </div>
 
-                        {/* Google Button - UI Only */}
+                        {/* Google Login Button */}
                         <Button
                             type="button"
                             variant="outline"
+                            onClick={handleGoogleLogin}
+                            disabled={isGoogleLoading || isSubmitting}
                             className="w-full h-11 rounded-lg border-gray-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-800 font-medium"
                         >
+
                             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                                 <path
                                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -231,12 +277,15 @@ export default function LoginPage() {
                                     fill="#EA4335"
                                 />
                             </svg>
-                            Continue with Google
+
+                            {isGoogleLoading ? "Connecting to Google..." : "Continue with Google"}
+
                         </Button>
 
                         {/* Register Link */}
                         <p className="mt-6 text-center text-sm text-muted-foreground">
                             Don&apos;t have an account?{" "}
+
                             <Link
                                 href="/signup"
                                 className="font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline"

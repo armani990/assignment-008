@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -29,6 +30,7 @@ export default function SignupPage() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
     const [name, setName] = useState("");
     const [photoURL, setPhotoURL] = useState("");
@@ -42,6 +44,7 @@ export default function SignupPage() {
         }
     }, [session, isPending, router]);
 
+    // Email and Password Signup
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -63,7 +66,7 @@ export default function SignupPage() {
             return;
         }
 
-        // Password validation: uppercase, lowercase, minimum 6 characters
+        // Password validation
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
 
         if (!passwordRegex.test(password)) {
@@ -114,6 +117,27 @@ export default function SignupPage() {
             );
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    // Google Signup
+    const handleGoogleSignup = async () => {
+        setIsGoogleLoading(true);
+
+        try {
+            const { error } = await authClient.signIn.social({
+                provider: "google",
+                callbackURL: "/",
+                errorCallbackURL: "/signup",
+            });
+
+            if (error) {
+                toast.error(error.message || "Google signup failed!");
+                setIsGoogleLoading(false);
+            }
+        } catch (error) {
+            toast.error(error.message || "Something went wrong!");
+            setIsGoogleLoading(false);
         }
     };
 
@@ -311,7 +335,7 @@ export default function SignupPage() {
                             {/* Signup Button */}
                             <Button
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || isGoogleLoading}
                                 className="w-full h-11 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg shadow-sm"
                             >
                                 <User className="mr-2 h-4 w-4" />
@@ -335,10 +359,12 @@ export default function SignupPage() {
 
                         </div>
 
-                        {/* Google Button - UI Only */}
+                        {/* Google Signup Button */}
                         <Button
                             type="button"
                             variant="outline"
+                            onClick={handleGoogleSignup}
+                            disabled={isGoogleLoading || isSubmitting}
                             className="w-full h-11 rounded-lg border-gray-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-800 font-medium"
                         >
 
@@ -361,7 +387,7 @@ export default function SignupPage() {
                                 />
                             </svg>
 
-                            Continue with Google
+                            {isGoogleLoading ? "Connecting to Google..." : "Continue with Google"}
 
                         </Button>
 
