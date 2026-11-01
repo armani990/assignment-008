@@ -1,9 +1,11 @@
-
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import toast from "react-hot-toast";
+
+import { authClient } from "@/lib/auth-client";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,6 +16,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import {
   Sheet,
@@ -34,14 +37,47 @@ import {
   HeartHandshake,
 } from "lucide-react";
 
-export default function Navbar({ user }) {
+export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
+
+  // Get logged-in user from Better Auth session
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
 
   const isActive = (path) => pathname === path;
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  };
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await authClient.signOut();
+
+      if (error) {
+        toast.error(error.message || "Logout failed!");
+        return;
+      }
+
+      toast.success("Logged out successfully!");
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      toast.error(error.message || "Something went wrong!");
+    }
+  };
+
+  const getInitials = (name) => {
+    return name
+      ? name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2)
+      : "U";
   };
 
   return (
@@ -86,7 +122,7 @@ export default function Navbar({ user }) {
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          {user ? (
+          {isPending ? null : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
@@ -103,39 +139,31 @@ export default function Navbar({ user }) {
                   />
 
                   <AvatarFallback className="bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300">
-                    {user.name
-                      ? user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                          .toUpperCase()
-                          .slice(0, 2)
-                      : "U"}
+                    {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {user.name || "User"}
-                    </p>
+              <DropdownMenuContent className="w-56" align="end">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {user.name || "User"}
+                      </p>
 
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                </DropdownMenuGroup>
 
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
                   render={
-                    <Link
-                      href="/create-event"
-                      className="cursor-pointer"
-                    />
+                    <Link href="/create-event" className="cursor-pointer" />
                   }
                 >
                   <CalendarPlus className="mr-2 h-4 w-4" />
@@ -144,10 +172,7 @@ export default function Navbar({ user }) {
 
                 <DropdownMenuItem
                   render={
-                    <Link
-                      href="/manage-events"
-                      className="cursor-pointer"
-                    />
+                    <Link href="/manage-events" className="cursor-pointer" />
                   }
                 >
                   <ListChecks className="mr-2 h-4 w-4" />
@@ -156,10 +181,7 @@ export default function Navbar({ user }) {
 
                 <DropdownMenuItem
                   render={
-                    <Link
-                      href="/joined-events"
-                      className="cursor-pointer"
-                    />
+                    <Link href="/joined-events" className="cursor-pointer" />
                   }
                 >
                   <UserCheck className="mr-2 h-4 w-4" />
@@ -168,7 +190,10 @@ export default function Navbar({ user }) {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem className="text-red-600 focus:text-red-600 cursor-pointer">
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-red-600 focus:text-red-600 cursor-pointer"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
                 </DropdownMenuItem>
@@ -211,17 +236,13 @@ export default function Navbar({ user }) {
                 {user && (
                   <div className="flex items-center gap-3 px-2">
                     <Avatar className="h-12 w-12 border-2 border-teal-200">
-                      <AvatarImage src={user.image || ""} />
+                      <AvatarImage
+                        src={user.image || ""}
+                        alt={user.name || "User"}
+                      />
 
                       <AvatarFallback className="bg-teal-100 text-teal-700">
-                        {user.name
-                          ? user.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                              .toUpperCase()
-                              .slice(0, 2)
-                          : "U"}
+                        {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
 
@@ -295,9 +316,10 @@ export default function Navbar({ user }) {
 
                 <Separator />
 
-                {user ? (
+                {isPending ? null : user ? (
                   <Button
                     variant="destructive"
+                    onClick={handleLogout}
                     className="w-full justify-start"
                   >
                     <LogOut className="mr-2 h-4 w-4" />

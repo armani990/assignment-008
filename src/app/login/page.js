@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -23,10 +22,19 @@ import {
 export default function LoginPage() {
     const router = useRouter();
 
+    const { data: session, isPending } = authClient.useSession();
+
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Redirect logged-in users to homepage
+    useEffect(() => {
+        if (!isPending && session?.user) {
+            router.replace("/");
+        }
+    }, [session, isPending, router]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -39,7 +47,7 @@ export default function LoginPage() {
         setIsSubmitting(true);
 
         try {
-            const { data, error } = await authClient.signIn.email({
+            const { error } = await authClient.signIn.email({
                 email: email.trim(),
                 password,
             });
@@ -50,6 +58,7 @@ export default function LoginPage() {
             }
 
             toast.success("Login successful!");
+
             router.push("/");
             router.refresh();
         } catch (error) {
@@ -58,6 +67,11 @@ export default function LoginPage() {
             setIsSubmitting(false);
         }
     };
+
+    // Don't show login form while checking session
+    if (isPending || session?.user) {
+        return null;
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 via-white to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950 p-4 transition-colors duration-300">
@@ -69,7 +83,7 @@ export default function LoginPage() {
                         <div className="absolute -top-10 -left-10 w-72 h-72 bg-teal-100/60 rounded-full blur-3xl" />
                         <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-emerald-100/50 rounded-full blur-3xl" />
 
-                        <div className="relative bg-white/40 backdrop-blur-sm rounded-3xl p-6 border border-teal-100/50 shadow-sm">
+                        <div className="relative bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm rounded-3xl p-6 border border-teal-100/50 dark:border-slate-700 shadow-sm">
                             <img
                                 src="/images/login-illustration.png"
                                 alt="Community helping illustration"
@@ -88,7 +102,8 @@ export default function LoginPage() {
                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-600 text-white">
                                 <HeartHandshake className="h-5 w-5" />
                             </div>
-                            <span className="text-2xl font-bold tracking-tight text-teal-700">
+
+                            <span className="text-2xl font-bold tracking-tight text-teal-700 dark:text-teal-400">
                                 SevaConnect
                             </span>
                         </div>
@@ -98,6 +113,7 @@ export default function LoginPage() {
                             <h1 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">
                                 Welcome Back
                             </h1>
+
                             <p className="mt-2 text-sm text-muted-foreground">
                                 Login to join and create social service events
                             </p>
@@ -108,7 +124,10 @@ export default function LoginPage() {
 
                             {/* Email */}
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+                                <Label
+                                    htmlFor="email"
+                                    className="text-sm font-medium text-slate-700 dark:text-slate-200"
+                                >
                                     Email
                                 </Label>
 
@@ -129,7 +148,10 @@ export default function LoginPage() {
 
                             {/* Password */}
                             <div className="space-y-2">
-                                <Label htmlFor="password" className="text-sm font-medium text-slate-700">
+                                <Label
+                                    htmlFor="password"
+                                    className="text-sm font-medium text-slate-700 dark:text-slate-200"
+                                >
                                     Password
                                 </Label>
 
@@ -142,14 +164,15 @@ export default function LoginPage() {
                                         placeholder="Enter your password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="pl-10 h-11 rounded-lg border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus-visible:ring-teal-500"
+                                        className="pl-10 pr-10 h-11 rounded-lg border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus-visible:ring-teal-500"
                                         required
                                     />
 
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-slate-600 transition-colors"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-slate-600 dark:hover:text-white transition-colors"
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
                                     >
                                         {showPassword ? (
                                             <EyeOff className="h-4 w-4" />
@@ -174,11 +197,11 @@ export default function LoginPage() {
                         {/* Divider */}
                         <div className="relative my-6">
                             <div className="absolute inset-0 flex items-center">
-                                <span className="w-full border-t border-gray-200" />
+                                <span className="w-full border-t border-gray-200 dark:border-slate-700" />
                             </div>
 
                             <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-white dark:bg-slate-900 px-3 text-gray-500 dark:text-slate-400 transition-colors duration-300">
+                                <span className="bg-white dark:bg-slate-900 px-3 text-gray-500 dark:text-slate-400">
                                     or
                                 </span>
                             </div>
@@ -188,7 +211,7 @@ export default function LoginPage() {
                         <Button
                             type="button"
                             variant="outline"
-                            className="w-full h-11 rounded-lg border-gray-200 hover:bg-gray-50 font-medium"
+                            className="w-full h-11 rounded-lg border-gray-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-800 font-medium"
                         >
                             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                                 <path
@@ -216,7 +239,7 @@ export default function LoginPage() {
                             Don&apos;t have an account?{" "}
                             <Link
                                 href="/signup"
-                                className="font-medium text-teal-600 hover:text-teal-700 hover:underline"
+                                className="font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline"
                             >
                                 Register
                             </Link>
