@@ -1,0 +1,69 @@
+
+import Link from "next/link";
+
+export default function ManageEventCard({ event }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-gray-900">
+      <img
+        src={event.image}
+        alt={event.title}
+        className="h-52 w-full object-cover"
+      />
+
+      <div className="p-5">
+        <span className="rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-700 dark:bg-teal-900 dark:text-teal-300">
+          {event.category}
+        </span>
+
+        <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-white">
+          {event.title}
+        </h3>
+
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          📍 {event.location}
+        </p>
+
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          📅{" "}
+          {new Date(event.eventDate).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </p>
+
+        <p className="mt-3 line-clamp-2 text-sm leading-6 text-gray-600 dark:text-gray-300">
+          {event.description}
+        </p>
+
+        {/* Action Buttons */}
+        <div className="mt-5 flex items-center justify-between gap-2">
+          <Link
+            href={`/events/${event._id}`}
+            className="rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-700"
+          >
+            View Event
+          </Link>
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              disabled
+              className="rounded-lg bg-blue-600 px-3 py-2.5 text-sm font-semibold text-white opacity-60 cursor-not-allowed"
+            >
+              Edit
+            </button>
+
+            <button
+              type="button"
+              disabled
+              className="rounded-lg bg-red-600 px-3 py-2.5 text-sm font-semibold text-white opacity-60 cursor-not-allowed"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
