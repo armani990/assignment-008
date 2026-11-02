@@ -2,13 +2,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import ManageEventCard from "@/components/shared/ManageEventCard";
 
 export default function ManageEvents() {
-  const router = useRouter();
 
   const { data: session, isPending } = authClient.useSession();
 
@@ -16,9 +14,6 @@ export default function ManageEvents() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isPending && !session) {
-      router.push("/login");
-    }
 
     if (!isPending && session) {
       const fetchMyEvents = async () => {
@@ -49,7 +44,7 @@ export default function ManageEvents() {
 
       fetchMyEvents();
     }
-  }, [isPending, session, router]);
+  }, [isPending, session]);
 
   if (isPending || !session || isLoading) {
     return (

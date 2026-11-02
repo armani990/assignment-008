@@ -1,29 +1,26 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import EventCard from "@/components/shared/EventCard";
 
 export default function JoinedEventsPage() {
   const { data: session, isPending } = authClient.useSession();
+
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     if (isPending) return;
 
-    if (!session?.user) {
-      router.push("/login");
-      return;
-    }
+    if (!session?.user) return;
 
     const fetchJoinedEvents = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/joined-events/${encodeURIComponent(session.user.email)}`,
+          `http://localhost:8000/joined-events/${encodeURIComponent(
+            session.user.email
+          )}`,
           { cache: "no-store" }
         );
 
@@ -44,7 +41,7 @@ export default function JoinedEventsPage() {
     };
 
     fetchJoinedEvents();
-  }, [session, isPending, router]);
+  }, [session, isPending]);
 
   if (isPending || loading) {
     return (
