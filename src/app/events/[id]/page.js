@@ -1,6 +1,7 @@
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import JoinEventButton from "@/components/shared/JoinEventButton";
 
 export default async function EventDetailsPage({ params }) {
   const { id } = await params;
@@ -79,12 +80,7 @@ export default async function EventDetailsPage({ params }) {
             </div>
 
             <div className="mt-10 border-t border-gray-200 pt-8 dark:border-gray-700">
-              <button
-                type="button"
-                className="w-full rounded-xl bg-teal-600 px-6 py-3.5 font-semibold text-white transition hover:bg-teal-700 sm:w-auto"
-              >
-                Join Event
-              </button>
+              <JoinEventButton eventId={event._id.toString()} />
             </div>
           </div>
         </div>
