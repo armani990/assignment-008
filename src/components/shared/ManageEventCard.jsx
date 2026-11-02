@@ -1,10 +1,9 @@
-
 "use client";
 
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
-
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -55,9 +54,7 @@ export default function ManageEventCard({ event }) {
       category: currentEvent.category,
       image: currentEvent.image,
       location: currentEvent.location,
-      eventDate: new Date(currentEvent.eventDate)
-        .toISOString()
-        .split("T")[0],
+      eventDate: new Date(currentEvent.eventDate).toISOString().split("T")[0],
     });
 
     setIsEditOpen(true);
@@ -81,7 +78,7 @@ export default function ManageEventCard({ event }) {
             ...formData,
             creatorEmail: currentEvent.creatorEmail,
           }),
-        }
+        },
       );
 
       const result = await response.json();
@@ -120,7 +117,7 @@ export default function ManageEventCard({ event }) {
           body: JSON.stringify({
             creatorEmail: currentEvent.creatorEmail,
           }),
-        }
+        },
       );
 
       const result = await response.json();
@@ -146,9 +143,11 @@ export default function ManageEventCard({ event }) {
   return (
     <>
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-gray-900">
-        <img
+        <Image
           src={currentEvent.image}
           alt={currentEvent.title}
+          width={600}
+          height={400}
           className="h-52 w-full object-cover"
         />
 
@@ -288,9 +287,7 @@ export default function ManageEventCard({ event }) {
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium">
-                Location
-              </label>
+              <label className="mb-2 block text-sm font-medium">Location</label>
 
               <input
                 type="text"
@@ -344,9 +341,7 @@ export default function ManageEventCard({ event }) {
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel>
-              Cancel
-            </AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
 
             <AlertDialogAction
               onClick={handleDelete}

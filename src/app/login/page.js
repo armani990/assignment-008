@@ -11,7 +11,7 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import Image from "next/image";
 import {
     HeartHandshake,
     Mail,
@@ -112,9 +112,11 @@ export default function LoginPage() {
 
                         <div className="relative bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm rounded-3xl p-6 border border-teal-100/50 dark:border-slate-700 shadow-sm">
 
-                            <img
+                            <Image
                                 src="/images/login-illustration.png"
                                 alt="Community helping illustration"
+                                width={600}
+                                height={600}
                                 className="w-full h-auto object-contain rounded-2xl"
                             />
 

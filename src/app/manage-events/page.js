@@ -89,7 +89,7 @@ export default function ManageEvents() {
             </h2>
 
             <p className="mt-2 text-gray-500 dark:text-gray-400">
-              You haven't created any events yet.
+              You&apos;re managing your events.
             </p>
           </div>
         )}
