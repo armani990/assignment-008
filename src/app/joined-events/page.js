@@ -30,7 +30,11 @@ export default function JoinedEventsPage() {
         const data = await response.json();
 
         if (response.ok) {
-          setEvents(data);
+          const sortedEvents = [...data].sort(
+            (a, b) => new Date(a.eventDate) - new Date(b.eventDate)
+          );
+
+          setEvents(sortedEvents);
         }
       } catch (error) {
         console.error("Failed to fetch joined events:", error);

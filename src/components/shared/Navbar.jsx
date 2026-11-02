@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -123,82 +124,88 @@ export default function Navbar() {
           </Button>
 
           {isPending ? null : user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    className="relative h-10 w-10 rounded-full p-0 hover:bg-teal-50 dark:hover:bg-teal-950"
-                  />
-                }
+            <>
+              {/* Profile Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      className="relative h-10 w-10 rounded-full p-0 hover:bg-teal-50 dark:hover:bg-teal-950"
+                    />
+                  }
+                >
+                  <Avatar
+                    title={user.name || "User"}
+                    className="h-9 w-9 border-2 border-teal-200 dark:border-teal-800"
+                  >
+                    <AvatarImage
+                      src={user.image || ""}
+                      alt={user.name || "User"}
+                    />
+
+                    <AvatarFallback className="bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300">
+                      {getInitials(user.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent className="w-56" align="end">
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">
+                          {user.name || "User"}
+                        </p>
+
+                        <p className="text-xs leading-none text-muted-foreground">
+                          {user.email}
+                        </p>
+                      </div>
+                    </DropdownMenuLabel>
+                  </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem
+                    render={
+                      <Link href="/create-event" className="cursor-pointer" />
+                    }
+                  >
+                    <CalendarPlus className="mr-2 h-4 w-4" />
+                    Create Event
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    render={
+                      <Link href="/manage-events" className="cursor-pointer" />
+                    }
+                  >
+                    <ListChecks className="mr-2 h-4 w-4" />
+                    Manage Events
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    render={
+                      <Link href="/joined-events" className="cursor-pointer" />
+                    }
+                  >
+                    <UserCheck className="mr-2 h-4 w-4" />
+                    Joined Events
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Logout Button */}
+              <Button
+                variant="destructive"
+                onClick={handleLogout}
+                className="rounded-lg"
               >
-                <Avatar className="h-9 w-9 border-2 border-teal-200 dark:border-teal-800">
-                  <AvatarImage
-                    src={user.image || ""}
-                    alt={user.name || "User"}
-                  />
-
-                  <AvatarFallback className="bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300">
-                    {getInitials(user.name)}
-                  </AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent className="w-56" align="end">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {user.name || "User"}
-                      </p>
-
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user.email}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                </DropdownMenuGroup>
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem
-                  render={
-                    <Link href="/create-event" className="cursor-pointer" />
-                  }
-                >
-                  <CalendarPlus className="mr-2 h-4 w-4" />
-                  Create Event
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  render={
-                    <Link href="/manage-events" className="cursor-pointer" />
-                  }
-                >
-                  <ListChecks className="mr-2 h-4 w-4" />
-                  Manage Events
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  render={
-                    <Link href="/joined-events" className="cursor-pointer" />
-                  }
-                >
-                  <UserCheck className="mr-2 h-4 w-4" />
-                  Joined Events
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem
-                  onClick={handleLogout}
-                  className="text-red-600 focus:text-red-600 cursor-pointer"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+            </>
           ) : (
             <Button
               render={<Link href="/login" />}

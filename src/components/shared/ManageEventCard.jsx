@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -29,6 +30,14 @@ export default function ManageEventCard({ event }) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Set tomorrow's date using local time
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const minDate = `${tomorrow.getFullYear()}-${String(
+    tomorrow.getMonth() + 1
+  ).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
 
   const [formData, setFormData] = useState({
     title: event.title,
@@ -78,7 +87,7 @@ export default function ManageEventCard({ event }) {
             ...formData,
             creatorEmail: currentEvent.creatorEmail,
           }),
-        },
+        }
       );
 
       const result = await response.json();
@@ -117,7 +126,7 @@ export default function ManageEventCard({ event }) {
           body: JSON.stringify({
             creatorEmail: currentEvent.creatorEmail,
           }),
-        },
+        }
       );
 
       const result = await response.json();
@@ -287,7 +296,9 @@ export default function ManageEventCard({ event }) {
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium">Location</label>
+              <label className="mb-2 block text-sm font-medium">
+                Location
+              </label>
 
               <input
                 type="text"
@@ -309,7 +320,7 @@ export default function ManageEventCard({ event }) {
                 name="eventDate"
                 value={formData.eventDate}
                 onChange={handleChange}
-                min={new Date().toISOString().split("T")[0]}
+                min={minDate}
                 required
                 className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 outline-none focus:border-teal-600 dark:border-gray-700"
               />
