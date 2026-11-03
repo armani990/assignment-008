@@ -3,26 +3,35 @@
 
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { getTokenFromClient } from "@/lib/get-token-client";
 import toast from "react-hot-toast";
 import ManageEventCard from "@/components/shared/ManageEventCard";
 
 export default function ManageEvents() {
-
   const { data: session, isPending } = authClient.useSession();
 
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-
     if (!isPending && session) {
       const fetchMyEvents = async () => {
         try {
+          const token = await getTokenFromClient();
+
+          if (!token) {
+            toast.error("Unauthorized! Please login again.");
+            return;
+          }
+
           const response = await fetch(
             `http://localhost:8000/events/my-events/${encodeURIComponent(
               session.user.email
             )}`,
             {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
               cache: "no-store",
             }
           );

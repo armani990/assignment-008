@@ -266,6 +266,7 @@ export default function Navbar() {
 
                 <div className="flex flex-col gap-1">
                   <SheetClose
+                    nativeButton={false}
                     render={
                       <Link
                         href="/upcoming-events"
@@ -283,6 +284,7 @@ export default function Navbar() {
                   {user && (
                     <>
                       <SheetClose
+                        nativeButton={false}
                         render={
                           <Link
                             href="/create-event"
@@ -295,6 +297,7 @@ export default function Navbar() {
                       </SheetClose>
 
                       <SheetClose
+                        nativeButton={false}
                         render={
                           <Link
                             href="/manage-events"
@@ -307,6 +310,7 @@ export default function Navbar() {
                       </SheetClose>
 
                       <SheetClose
+                        nativeButton={false}
                         render={
                           <Link
                             href="/joined-events"
@@ -334,6 +338,7 @@ export default function Navbar() {
                   </Button>
                 ) : (
                   <SheetClose
+                    nativeButton={false}
                     render={
                       <Link
                         href="/login"

@@ -1,7 +1,9 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { getTokenFromClient } from "@/lib/get-token-client";
 import EventCard from "@/components/shared/EventCard";
 
 export default function JoinedEventsPage() {
@@ -17,11 +19,23 @@ export default function JoinedEventsPage() {
 
     const fetchJoinedEvents = async () => {
       try {
+        const token = await getTokenFromClient();
+
+        if (!token) {
+          console.error("Unauthorized! Please login again.");
+          return;
+        }
+
         const response = await fetch(
           `http://localhost:8000/joined-events/${encodeURIComponent(
             session.user.email
           )}`,
-          { cache: "no-store" }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+          }
         );
 
         const data = await response.json();
@@ -43,7 +57,7 @@ export default function JoinedEventsPage() {
     fetchJoinedEvents();
   }, [session, isPending]);
 
-  if (isPending || loading) {
+  if (isPending) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <p className="text-gray-500">Loading joined events...</p>
@@ -52,6 +66,14 @@ export default function JoinedEventsPage() {
   }
 
   if (!session?.user) return null;
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <p className="text-gray-500">Loading joined events...</p>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-12 dark:bg-gray-950">

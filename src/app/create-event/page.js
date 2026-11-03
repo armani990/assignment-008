@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { getTokenFromClient } from "@/lib/get-token-client";
 import toast from "react-hot-toast";
 
 export default function CreateEvent() {
@@ -21,7 +22,6 @@ export default function CreateEvent() {
     location: "",
     eventDate: "",
   });
-
 
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -43,16 +43,20 @@ export default function CreateEvent() {
     setIsSubmitting(true);
 
     try {
+      const token = await getTokenFromClient();
+
+      if (!token) {
+        toast.error("Unauthorized! Please login again.");
+        return;
+      }
+
       const response = await fetch("http://localhost:8000/events", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          ...formData,
-          creatorEmail: session.user.email,
-          creatorId: session.user.id,
-        }),
+        body: JSON.stringify(formData),
       });
 
       const result = await response.json();
@@ -143,6 +147,7 @@ export default function CreateEvent() {
               Event Type
             </label>
 
+
             <select
               name="category"
               value={formData.category}
@@ -151,15 +156,16 @@ export default function CreateEvent() {
               className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-teal-600 dark:border-gray-700 dark:bg-gray-900"
             >
               <option value="">Select event type</option>
-              <option value="Community Cleanup">Community Service</option>
+              <option value="Community Service">Community Service</option>
               <option value="Food Donation">Food Donation</option>
-              <option value="Tree Plantation">Environment</option>
-              <option value="Tree Plantation">Social Welfare</option>
+              <option value="Environment">Environment</option>
+              <option value="Social Welfare">Social Welfare</option>
               <option value="Education">Education</option>
-              <option value="Education">Charity</option>
-              <option value="Health">Health & Wellness</option>
+              <option value="Charity">Charity</option>
+              <option value="Health & Wellness">Health & Wellness</option>
               <option value="Other">Other</option>
             </select>
+
           </div>
 
           {/* Thumbnail Image URL */}

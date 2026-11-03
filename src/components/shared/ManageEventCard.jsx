@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { getTokenFromClient } from "@/lib/get-token-client";
+
 import {
   Dialog,
   DialogContent,
@@ -76,17 +78,22 @@ export default function ManageEventCard({ event }) {
     setIsSubmitting(true);
 
     try {
+      const token = await getTokenFromClient();
+
+      if (!token) {
+        toast.error("Unauthorized! Please login again.");
+        return;
+      }
+
       const response = await fetch(
         `http://localhost:8000/events/${currentEvent._id}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            ...formData,
-            creatorEmail: currentEvent.creatorEmail,
-          }),
+          body: JSON.stringify(formData),
         }
       );
 
@@ -116,16 +123,20 @@ export default function ManageEventCard({ event }) {
   // Delete event
   const handleDelete = async () => {
     try {
+      const token = await getTokenFromClient();
+
+      if (!token) {
+        toast.error("Unauthorized! Please login again.");
+        return;
+      }
+
       const response = await fetch(
         `http://localhost:8000/events/${currentEvent._id}`,
         {
           method: "DELETE",
           headers: {
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            creatorEmail: currentEvent.creatorEmail,
-          }),
         }
       );
 

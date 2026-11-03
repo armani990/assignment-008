@@ -5,11 +5,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
+import { getTokenFromClient } from "@/lib/get-token-client";
 
 export default function JoinEventButton({ eventId }) {
   const { data: session, isPending } = authClient.useSession();
+
   const [isJoined, setIsJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -17,10 +20,23 @@ export default function JoinEventButton({ eventId }) {
 
     const checkJoinedEvent = async () => {
       try {
+        const token = await getTokenFromClient();
+
+        if (!token) return;
+
         const response = await fetch(
-          `http://localhost:8000/joined-events/${encodeURIComponent(session.user.email)}`,
-          { cache: "no-store" }
+          `http://localhost:8000/joined-events/${encodeURIComponent(
+            session.user.email
+          )}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+          }
         );
+
+        if (!response.ok) return;
 
         const events = await response.json();
 
@@ -45,17 +61,21 @@ export default function JoinEventButton({ eventId }) {
     setIsJoining(true);
 
     try {
+      const token = await getTokenFromClient();
+
+      if (!token) {
+        toast.error("Unauthorized! Please login again.");
+        return;
+      }
+
       const response = await fetch(
         `http://localhost:8000/events/${eventId}/join`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            userEmail: session.user.email,
-            userId: session.user.id,
-          }),
         }
       );
 

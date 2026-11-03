@@ -2,30 +2,34 @@
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
+import { jwt } from "better-auth/plugins";
 
 const client = new MongoClient(process.env.MONGODB_URL);
 const db = client.db();
 
 export const auth = betterAuth({
-    baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: process.env.BETTER_AUTH_URL,
 
-    database: mongodbAdapter(db, {
-        client,
-    }),
+  database: mongodbAdapter(db, {
+    client,
+  }),
 
-    emailAndPassword: {
-        enabled: true,
-        requireEmailVerification: false,
-        minPasswordLength: 6,
-        autoSignIn: false,
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: false,
+    minPasswordLength: 6,
+    autoSignIn: false,
+  },
+
+  // Google Authentication
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      prompt: "select_account",
     },
+  },
 
-    // Google Authentication
-    socialProviders: {
-        google: {
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            prompt: "select_account",
-        },
-    },
+  // JWT Plugin
+  plugins: [jwt()],
 });
