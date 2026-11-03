@@ -27,7 +27,7 @@ export default function JoinedEventsPage() {
         }
 
         const response = await fetch(
-          `http://localhost:8000/joined-events/${encodeURIComponent(
+          `${process.env.NEXT_PUBLIC_API_URL}/joined-events/${encodeURIComponent(
             session.user.email
           )}`,
           {
