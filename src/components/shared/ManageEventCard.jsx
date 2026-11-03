@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -38,7 +37,7 @@ export default function ManageEventCard({ event }) {
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   const minDate = `${tomorrow.getFullYear()}-${String(
-    tomorrow.getMonth() + 1
+    tomorrow.getMonth() + 1,
   ).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
 
   const [formData, setFormData] = useState({
@@ -86,7 +85,7 @@ export default function ManageEventCard({ event }) {
       }
 
       const response = await fetch(
-        `http://localhost:8000/events/${currentEvent._id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/events/${currentEvent._id}`,
         {
           method: "PATCH",
           headers: {
@@ -94,7 +93,7 @@ export default function ManageEventCard({ event }) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(formData),
-        }
+        },
       );
 
       const result = await response.json();
@@ -131,13 +130,13 @@ export default function ManageEventCard({ event }) {
       }
 
       const response = await fetch(
-        `http://localhost:8000/events/${currentEvent._id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/events/${currentEvent._id}`,
         {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const result = await response.json();
@@ -282,11 +281,13 @@ export default function ManageEventCard({ event }) {
                 className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-teal-600 dark:border-gray-700 dark:bg-gray-900"
               >
                 <option value="">Select event type</option>
-                <option value="Community Cleanup">Community Cleanup</option>
+                <option value="Community Cleanup">Community Service</option>
                 <option value="Food Donation">Food Donation</option>
-                <option value="Tree Plantation">Tree Plantation</option>
+                <option value="Tree Plantation">Environment</option>
+                <option value="Tree Plantation">Social Welfare</option>
                 <option value="Education">Education</option>
-                <option value="Health">Health</option>
+                <option value="Education">Charity</option>
+                <option value="Health">Health & Wellness</option>
                 <option value="Other">Other</option>
               </select>
             </div>
@@ -307,9 +308,7 @@ export default function ManageEventCard({ event }) {
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium">
-                Location
-              </label>
+              <label className="mb-2 block text-sm font-medium">Location</label>
 
               <input
                 type="text"

@@ -25,7 +25,7 @@ export default function ManageEvents() {
           }
 
           const response = await fetch(
-            `http://localhost:8000/events/my-events/${encodeURIComponent(
+            `${process.env.NEXT_PUBLIC_API_URL}/events/my-events/${encodeURIComponent(
               session.user.email
             )}`,
             {

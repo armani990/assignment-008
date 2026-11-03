@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -25,24 +24,22 @@ export default function JoinEventButton({ eventId }) {
         if (!token) return;
 
         const response = await fetch(
-          `http://localhost:8000/joined-events/${encodeURIComponent(
-            session.user.email
+          `${process.env.NEXT_PUBLIC_API_URL}/joined-events/${encodeURIComponent(
+            session.user.email,
           )}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
             cache: "no-store",
-          }
+          },
         );
 
         if (!response.ok) return;
 
         const events = await response.json();
 
-        setIsJoined(
-          events.some((event) => event._id === eventId)
-        );
+        setIsJoined(events.some((event) => event._id === eventId));
       } catch (error) {
         console.error("Failed to check joined events:", error);
       }
@@ -69,14 +66,14 @@ export default function JoinEventButton({ eventId }) {
       }
 
       const response = await fetch(
-        `http://localhost:8000/events/${eventId}/join`,
+        `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/join`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const result = await response.json();

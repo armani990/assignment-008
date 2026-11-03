@@ -2,7 +2,7 @@
 import EventCard from "@/components/shared/EventCard";
 
 export default async function UpcomingEvents() {
-  const response = await fetch("http://localhost:8000/events", {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
     cache: "no-store",
   });
 
