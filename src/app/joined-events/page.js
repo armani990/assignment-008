@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { getTokenFromClient } from "@/lib/get-token-client";
 import EventCard from "@/components/shared/EventCard";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 export default function JoinedEventsPage() {
   const { data: session, isPending } = authClient.useSession();
@@ -78,7 +79,9 @@ export default function JoinedEventsPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-12 dark:bg-gray-950">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-10">
+
+        {/* Page Heading */}
+        <ScrollReveal className="mb-10">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             My Joined Events
           </h1>
@@ -86,22 +89,30 @@ export default function JoinedEventsPage() {
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             All the events you have joined.
           </p>
-        </div>
+        </ScrollReveal>
 
         {events.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center dark:border-gray-700 dark:bg-gray-900">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              No Joined Events Yet!
-            </h2>
+          <ScrollReveal>
+            <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center dark:border-gray-700 dark:bg-gray-900">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                No Joined Events Yet!
+              </h2>
 
-            <p className="mt-2 text-gray-500 dark:text-gray-400">
-              Explore upcoming events and join the ones you like.
-            </p>
-          </div>
+              <p className="mt-2 text-gray-500 dark:text-gray-400">
+                Explore upcoming events and join the ones you like.
+              </p>
+            </div>
+          </ScrollReveal>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <EventCard key={event._id} event={event} />
+            {events.map((event, index) => (
+              <ScrollReveal
+                key={event._id}
+                delay={index * 0.12}
+                className="h-full"
+              >
+                <EventCard event={event} />
+              </ScrollReveal>
             ))}
           </div>
         )}

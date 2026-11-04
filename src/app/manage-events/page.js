@@ -6,6 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { getTokenFromClient } from "@/lib/get-token-client";
 import toast from "react-hot-toast";
 import ManageEventCard from "@/components/shared/ManageEventCard";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 export default function ManageEvents() {
   const { data: session, isPending } = authClient.useSession();
@@ -66,7 +67,9 @@ export default function ManageEvents() {
   return (
     <main className="min-h-screen px-5 py-16 md:px-10 lg:px-16">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-12 text-center">
+
+        {/* Page Heading */}
+        <ScrollReveal className="mb-12 text-center">
           <p className="mb-3 font-semibold uppercase tracking-widest text-teal-600">
             Your Activities
           </p>
@@ -78,24 +81,33 @@ export default function ManageEvents() {
           <p className="mx-auto mt-4 max-w-2xl text-gray-600 dark:text-gray-400">
             Manage the community events you have created.
           </p>
-        </div>
+        </ScrollReveal>
 
+        {/* Events Grid */}
         {events.length > 0 ? (
           <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <ManageEventCard key={event._id} event={event} />
+            {events.map((event, index) => (
+              <ScrollReveal
+                key={event._id}
+                delay={index * 0.12}
+                className="h-full"
+              >
+                <ManageEventCard event={event} />
+              </ScrollReveal>
             ))}
           </div>
         ) : (
-          <div className="py-20 text-center">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-              No Events Found
-            </h2>
+          <ScrollReveal>
+            <div className="py-20 text-center">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+                No Events Found
+              </h2>
 
-            <p className="mt-2 text-gray-500 dark:text-gray-400">
-              You&apos;re managing your events.
-            </p>
-          </div>
+              <p className="mt-2 text-gray-500 dark:text-gray-400">
+                You&apos;re managing your events.
+              </p>
+            </div>
+          </ScrollReveal>
         )}
       </div>
     </main>

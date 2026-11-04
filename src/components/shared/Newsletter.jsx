@@ -1,12 +1,13 @@
 
 import { Mail, Send } from "lucide-react";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 export default function Newsletter() {
   return (
     <section className="bg-background px-5 py-20 md:py-24">
       <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl bg-teal-700 px-6 py-14 text-center md:px-12 md:py-20">
 
-        <div className="mx-auto max-w-2xl">
+        <ScrollReveal className="mx-auto max-w-2xl">
 
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-white">
             <Mail size={32} />
@@ -48,7 +49,8 @@ export default function Newsletter() {
             Stay inspired. Stay involved. Be the change.
           </p>
 
-        </div>
+        </ScrollReveal>
+
       </div>
     </section>
   );

@@ -1,5 +1,6 @@
 
 import Image from "next/image";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 const galleryImages = [
   {
@@ -40,7 +41,7 @@ export default function Gallery() {
       <div className="mx-auto max-w-7xl px-5">
 
         {/* Section Heading */}
-        <div className="mx-auto mb-12 max-w-2xl text-center">
+        <ScrollReveal className="mx-auto mb-12 max-w-2xl text-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-teal-600">
             Our Community Moments
           </p>
@@ -53,35 +54,41 @@ export default function Gallery() {
             Every small act of kindness creates a lasting impact.
             Explore the moments that bring our community together.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {galleryImages.map((image, index) => (
-            <div
+            <ScrollReveal
               key={image.title}
-              className="group relative h-72 overflow-hidden rounded-2xl bg-muted shadow-sm"
+              delay={index * 0.12}
+              initialScale={0.96}
+              className="h-full"
             >
-              <Image
-                src={image.src}
-                alt={image.title}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
-              />
+              <div className="group relative h-72 overflow-hidden rounded-2xl bg-muted shadow-sm">
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                <Image
+                  src={image.src}
+                  alt={image.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
 
-              <div className="absolute bottom-0 left-0 p-6">
-                <p className="mb-2 text-xs font-medium uppercase tracking-wider text-teal-300">
-                  {image.category}
-                </p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
 
-                <h3 className="text-xl font-semibold text-white">
-                  {image.title}
-                </h3>
+                <div className="absolute bottom-0 left-0 p-6">
+                  <p className="mb-2 text-xs font-medium uppercase tracking-wider text-teal-300">
+                    {image.category}
+                  </p>
+
+                  <h3 className="text-xl font-semibold text-white">
+                    {image.title}
+                  </h3>
+                </div>
+
               </div>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
 

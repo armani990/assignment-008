@@ -1,4 +1,6 @@
+
 import EventCard from "./EventCard";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 export default async function RecentEvents() {
   const response = await fetch(
@@ -13,7 +15,9 @@ export default async function RecentEvents() {
   return (
     <section className="px-5 py-16 md:px-10 lg:px-16">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-10 text-center">
+
+        {/* Section Heading */}
+        <ScrollReveal className="mb-10 text-center">
           <p className="mb-3 font-semibold uppercase tracking-widest text-teal-600">
             Make A Difference
           </p>
@@ -26,11 +30,18 @@ export default async function RecentEvents() {
             Discover upcoming community events and become a part of something
             meaningful.
           </p>
-        </div>
+        </ScrollReveal>
 
+        {/* Event Cards */}
         <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-          {events.map((event) => (
-            <EventCard key={event._id} event={event} />
+          {events.map((event, index) => (
+            <ScrollReveal
+              key={event._id}
+              delay={index * 0.12}
+              className="h-full"
+            >
+              <EventCard event={event} />
+            </ScrollReveal>
           ))}
         </div>
       </div>

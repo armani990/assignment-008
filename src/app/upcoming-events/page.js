@@ -1,5 +1,6 @@
 
 import EventCard from "@/components/shared/EventCard";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 export default async function UpcomingEvents() {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
@@ -11,8 +12,9 @@ export default async function UpcomingEvents() {
   return (
     <main className="min-h-screen px-5 py-16 md:px-10 lg:px-16">
       <div className="mx-auto max-w-7xl">
+
         {/* Page Heading */}
-        <div className="mb-12 text-center">
+        <ScrollReveal className="mb-12 text-center">
           <p className="mb-3 font-semibold uppercase tracking-widest text-teal-600">
             Make A Difference
           </p>
@@ -25,13 +27,19 @@ export default async function UpcomingEvents() {
             Explore upcoming community events and join us to make a positive
             difference in the community.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Events Grid */}
         {events.length > 0 ? (
           <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <EventCard key={event._id} event={event} />
+            {events.map((event, index) => (
+              <ScrollReveal
+                key={event._id}
+                delay={index * 0.12}
+                className="h-full"
+              >
+                <EventCard event={event} />
+              </ScrollReveal>
             ))}
           </div>
         ) : (
