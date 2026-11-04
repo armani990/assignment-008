@@ -36,6 +36,7 @@ import {
   ListChecks,
   UserCheck,
   HeartHandshake,
+  Info,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -84,6 +85,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
+
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-600 text-white group-hover:bg-teal-700 transition-colors">
@@ -107,10 +109,23 @@ export default function Navbar() {
           >
             Upcoming Events
           </Link>
+
+          {/* About Us */}
+          <Link
+            href="/about"
+            className={`text-sm font-medium transition-colors hover:text-teal-600 ${
+              isActive("/about")
+                ? "text-teal-600"
+                : "text-muted-foreground"
+            }`}
+          >
+            About Us
+          </Link>
         </nav>
 
         {/* Desktop Right Side */}
         <div className="hidden md:flex items-center gap-3">
+
           {/* Theme Toggle */}
           <Button
             variant="ghost"
@@ -219,6 +234,7 @@ export default function Navbar() {
 
         {/* Mobile Right Side */}
         <div className="flex md:hidden items-center gap-2">
+
           {/* Theme Toggle */}
           <Button
             variant="ghost"
@@ -240,6 +256,7 @@ export default function Navbar() {
 
             <SheetContent side="right" className="w-75 sm:w-87.5">
               <div className="mt-6 flex flex-col gap-6">
+
                 {user && (
                   <div className="flex items-center gap-3 px-2">
                     <Avatar className="h-12 w-12 border-2 border-teal-200">
@@ -265,6 +282,8 @@ export default function Navbar() {
                 <Separator />
 
                 <div className="flex flex-col gap-1">
+
+                  {/* Upcoming Events */}
                   <SheetClose
                     nativeButton={false}
                     render={
@@ -279,6 +298,24 @@ export default function Navbar() {
                     }
                   >
                     Upcoming Events
+                  </SheetClose>
+
+                  {/* About Us */}
+                  <SheetClose
+                    nativeButton={false}
+                    render={
+                      <Link
+                        href="/about"
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-teal-50 dark:hover:bg-teal-950 ${
+                          isActive("/about")
+                            ? "bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300"
+                            : ""
+                        }`}
+                      />
+                    }
+                  >
+                    <Info className="h-4 w-4" />
+                    About Us
                   </SheetClose>
 
                   {user && (
