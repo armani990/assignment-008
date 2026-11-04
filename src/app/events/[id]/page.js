@@ -7,12 +7,19 @@ import JoinEventButton from "@/components/shared/JoinEventButton";
 export default async function EventDetailsPage({ params }) {
   const { id } = await params;
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${id}`, {
-    cache: "no-store",
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/events/${id}`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (response.status === 400 || response.status === 404) {
+    notFound();
+  }
 
   if (!response.ok) {
-    notFound();
+    throw new Error(`Failed to load event: ${response.status}`);
   }
 
   const event = await response.json();
