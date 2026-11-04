@@ -37,6 +37,7 @@ import {
   UserCheck,
   HeartHandshake,
   Info,
+  UserRound,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -182,6 +183,16 @@ export default function Navbar() {
 
                   <DropdownMenuSeparator />
 
+                  {/* Profile */}
+                  <DropdownMenuItem
+                    render={
+                      <Link href="/profile" className="cursor-pointer" />
+                    }
+                  >
+                    <UserRound className="mr-2 h-4 w-4" />
+                    Profile
+                  </DropdownMenuItem>
+
                   <DropdownMenuItem
                     render={
                       <Link href="/create-event" className="cursor-pointer" />
@@ -320,6 +331,24 @@ export default function Navbar() {
 
                   {user && (
                     <>
+                      {/* Profile */}
+                      <SheetClose
+                        nativeButton={false}
+                        render={
+                          <Link
+                            href="/profile"
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-teal-50 dark:hover:bg-teal-950 ${
+                              isActive("/profile")
+                                ? "bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300"
+                                : ""
+                            }`}
+                          />
+                        }
+                      >
+                        <UserRound className="h-4 w-4" />
+                        Profile
+                      </SheetClose>
+
                       <SheetClose
                         nativeButton={false}
                         render={
