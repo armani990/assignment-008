@@ -1,5 +1,6 @@
+
 import Link from "next/link";
-import { HeartHandshake, Mail, ArrowUpRight } from "lucide-react";
+import { HeartHandshake, Mail, ArrowUpRight, MapPin, Phone } from "lucide-react";
 
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 
@@ -9,10 +10,10 @@ const quickLinks = [
   { name: "About Us", href: "/about" },
 ];
 
-const communityLinks = [
-  { name: "Create an Event", href: "/create-event" },
-  { name: "Manage Events", href: "/manage-events" },
-  { name: "Joined Events", href: "/joined-events" },
+const supportLinks = [
+  { name: "Contact Us", href: "mailto:hello@sevaconnect.com" },
+  { name: "Community Guidelines", href: "#" },
+  { name: "Privacy Policy", href: "#" },
 ];
 
 export default function Footer() {
@@ -20,6 +21,7 @@ export default function Footer() {
     <footer className="border-t border-border bg-muted/40">
       <div className="mx-auto max-w-7xl px-5 pt-16 pb-8">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
+
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2">
@@ -41,14 +43,16 @@ export default function Footer() {
             <div className="mt-6 flex items-center gap-3">
               <a
                 href="#"
-                className="transition-all duration-300 hover:text-teal-500 hover:scale-110"
+                aria-label="Facebook"
+                className="transition-all duration-300 hover:scale-110 hover:text-teal-500"
               >
                 <FaFacebookF size={18} />
               </a>
 
               <a
                 href="#"
-                className="transition-all duration-300 hover:text-teal-500 hover:scale-110"
+                aria-label="Instagram"
+                className="transition-all duration-300 hover:scale-110 hover:text-teal-500"
               >
                 <FaInstagram size={20} />
               </a>
@@ -83,14 +87,14 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Get Involved */}
+          {/* Community Support */}
           <div>
             <h3 className="mb-5 text-base font-semibold text-foreground">
-              Get Involved
+              Community Support
             </h3>
 
             <ul className="space-y-3">
-              {communityLinks.map((link) => (
+              {supportLinks.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
@@ -102,6 +106,23 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
+
+            <div className="mt-6 space-y-3">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Mail size={16} className="text-teal-600" />
+                <a
+                  href="mailto:hello@sevaconnect.com"
+                  className="transition hover:text-teal-600"
+                >
+                  hello@sevaconnect.com
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MapPin size={16} className="text-teal-600" />
+                <span>Building Better Communities</span>
+              </div>
+            </div>
           </div>
         </div>
 
