@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   HeartHandshake,
@@ -50,6 +51,7 @@ export default function Banner() {
     }
   }, [transitionEnabled]);
 
+  // Handle infinite loop
   const handleTransitionEnd = () => {
     if (currentIndex === slides.length - 1) {
       setTransitionEnabled(false);
@@ -62,16 +64,24 @@ export default function Banner() {
 
       {/* Background Image Slider */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <div
+        <motion.div
           className="flex h-full"
-          onTransitionEnd={handleTransitionEnd}
+          animate={{
+            x: `${-currentIndex * (100 / slides.length)}%`,
+          }}
+          transition={
+            transitionEnabled
+              ? {
+                  duration: 0.75,
+                  ease: [0.22, 1, 0.36, 1],
+                }
+              : {
+                  duration: 0,
+                }
+          }
+          onAnimationComplete={handleTransitionEnd}
           style={{
             width: `${slides.length * 100}%`,
-            height: "100%",
-            transform: `translateX(-${currentIndex * (100 / slides.length)}%)`,
-            transition: transitionEnabled
-              ? "transform 750ms cubic-bezier(0.22, 1, 0.36, 1)"
-              : "none",
           }}
         >
           {slides.map((image, index) => (
@@ -88,7 +98,7 @@ export default function Banner() {
               }}
             />
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* Dark Overlay */}
